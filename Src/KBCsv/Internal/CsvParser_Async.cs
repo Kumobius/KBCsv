@@ -30,10 +30,10 @@
                             if (escaped)
                             {
                                 // we had an escape character previous, just insert this as whatever character it is
-                                this.valueBuilder.NotifyPreviousCharIncluded(true);
+                                this.valueBuilder.NotifyPreviousCharIncluded(delimited);
                                 escaped = false;
                             }
-                            else if (ch == this.escapeCharacter)
+                            else if (delimited && ch == this.escapeCharacter)
                             {
                                 // User specified escape character, do not insert into value, next read character is not special
                                 this.valueBuilder.NotifyPreviousCharExcluded();
@@ -134,10 +134,10 @@
                         if (escaped)
                         {
                             // we had an escape character previous, just insert this as whatever character it is
-                            this.valueBuilder.NotifyPreviousCharIncluded(true);
+                            this.valueBuilder.NotifyPreviousCharIncluded(delimited);
                             escaped = false;
                         }
-                        else if (ch == this.escapeCharacter)
+                        else if (delimited && ch == this.escapeCharacter)
                         {
                             // User specified escape character, do not insert into value, next read character is not special
                             this.valueBuilder.NotifyPreviousCharExcluded();

@@ -1363,9 +1363,43 @@ third";
         }
 
         [Fact]
+        public void read_data_records_with_escape_character()
+        {
+            var csv = @"first,""\""second\"""",third,\fourth";
+
+            using (var reader = CsvReader.FromCsvString(csv))
+            {
+                reader.EscapeCharacter = '\\';
+
+                var dataRecord = reader.ReadDataRecord();
+                Assert.Equal(4, dataRecord.Count);
+                Assert.Equal("first", dataRecord[0]);
+                Assert.Equal("\"second\"", dataRecord[1]);
+                Assert.Equal("third", dataRecord[2]);
+                Assert.Equal("\\fourth", dataRecord[3]);
+            }
+        }
+
+        [Fact]
+        public void read_data_records_with_no_escape_character()
+        {
+            var csv = @"first,\""second\"",third,\fourth";
+
+            using (var reader = CsvReader.FromCsvString(csv))
+            {
+                var dataRecord = reader.ReadDataRecord();
+                Assert.Equal(4, dataRecord.Count);
+                Assert.Equal("first", dataRecord[0]);
+                Assert.Equal("\\second\\", dataRecord[1]);
+                Assert.Equal("third", dataRecord[2]);
+                Assert.Equal("\\fourth", dataRecord[3]);
+            }
+        }
+
+        [Fact]
         public async Task read_data_records_async_with_escape_character()
         {
-            var csv = @"first,""\""second\"""",third";
+            var csv = @"first,""\""second\"""",third,\fourth";
 
             using (var reader = CsvReader.FromCsvString(csv))
             {
@@ -1375,17 +1409,18 @@ third";
                 Assert.Equal(1, await reader.ReadDataRecordsAsync(buffer, 0, buffer.Length));
 
                 var dataRecord = buffer[0];
-                Assert.Equal(3, dataRecord.Count);
+                Assert.Equal(4, dataRecord.Count);
                 Assert.Equal("first", dataRecord[0]);
                 Assert.Equal("\"second\"", dataRecord[1]);
                 Assert.Equal("third", dataRecord[2]);
+                Assert.Equal("\\fourth", dataRecord[3]);
             }
         }
 
         [Fact]
         public async Task read_data_records_async_with_no_escape_character()
         {
-            var csv = @"first,\""second\"",third";
+            var csv = @"first,\""second\"",third,\fourth";
 
             using (var reader = CsvReader.FromCsvString(csv))
             {
@@ -1393,10 +1428,11 @@ third";
                 Assert.Equal(1, await reader.ReadDataRecordsAsync(buffer, 0, buffer.Length));
 
                 var dataRecord = buffer[0];
-                Assert.Equal(3, dataRecord.Count);
+                Assert.Equal(4, dataRecord.Count);
                 Assert.Equal("first", dataRecord[0]);
                 Assert.Equal("\\second\\", dataRecord[1]);
                 Assert.Equal("third", dataRecord[2]);
+                Assert.Equal("\\fourth", dataRecord[3]);
             }
         }
 
